@@ -36,7 +36,9 @@ public class BoardRepository : IBoardRepository
         var boardEF = await _db.Boards.FindAsync(board.Id);
         if (boardEF == null) return;
 
+        boardEF.Step = board.Step;
         boardEF.StateJson = JsonSerializer.Serialize(_matrixMapper.To(board.State));
+
         _db.Boards.Update(boardEF);
         await _db.SaveChangesAsync();
     }

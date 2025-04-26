@@ -1,6 +1,41 @@
-@GameOfLife.Api_HostAddress = http://localhost:5290
+@GameOfLife.Api_HostAddress = https://localhost:64149
 
-GET {{GameOfLife.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{GameOfLife.Api_HostAddress}}/boards
+Content-Type: application/json
+
+{
+  "initialState": [
+    [false, true, false, false, true, false, true, false, false, true, false, false, true, false, false, true, false, true, false, false, true, false, true, false, false, true, false, true, false, false],
+    [false, false, true, true, false, true, false, false, true, true, false, true, true, false, false, true, false, false, true, false, false, true, true, false, false, true, true, false, false, true],
+    [true, false, false, true, false, false, true, true, false, false, true, true, false, false, true, true, false, true, false, false, true, true, false, false, true, false, true, false, true, false],
+    [false, true, true, false, true, true, false, false, true, false, true, false, false, true, true, false, true, true, false, true, true, false, true, true, false, true, false, false, true, false],
+    [true, false, false, true, false, true, false, true, false, true, false, true, false, true, false, false, true, false, false, true, true, false, false, true, false, true, false, false, true, true],
+    [false, true, true, false, false, true, false, true, false, true, false, true, true, false, true, false, true, false, false, true, false, true, true, false, true, false, true, false, false, true],
+    [true, false, true, true, false, true, false, true, false, false, true, false, true, false, true, false, true, false, true, false, true, false, false, true, true, false, true, false, true, false],
+    [false, true, false, true, false, true, false, false, true, true, false, true, true, false, false, true, true, false, true, false, true, false, true, false, false, true, false, true, false, true],
+    [true, false, true, false, true, false, true, true, false, true, false, true, false, true, true, false, true, false, true, false, false, true, false, true, false, true, true, false, true, false],
+    [false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true, true],
+    [true, false, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, false, true, true, false, true, false, true],
+    [false, true, false, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, false],
+    [true, false, true, false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true, true, false, true, false, true, true, false, true, false, true, false],
+    [false, true, false, true, true, false, true, false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, true, true, false, true, false, true],
+    [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false],
+    [false, true, true, false, true, true, false, true, false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true, true, false, true, true, false, true],
+    [true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true],
+    [false, true, false, true, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true, false],
+    [true, false, true, false, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true, false, true, false, true, true, false, true, false],
+    [false, true, true, false, true, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, true, false],
+    [true, false, true, true, false, true, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false],
+    [false, true, false, true, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true, true, false, true, false, true, false, true, true, false, true],
+    [true, false, true, false, true, false, true, true, false, true, false, true, false, true, true, false, true, false, true, false, true, true, false, true, false, true, false, true, false, true],
+    [false, true, false, true, false, true, false, false, true, true, false, true, true, false, true, false, true, false, true, false, false, true, true, false, true, false, true, true, false, true],
+    [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false],
+    [false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true],
+    [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false],
+    [false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true],
+    [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false],
+    [false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true]
+  ]
+}
 
 ###

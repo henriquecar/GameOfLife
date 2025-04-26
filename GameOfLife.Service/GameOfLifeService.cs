@@ -87,7 +87,6 @@ public class GameOfLifeService
         board.Step++;
     }
 
-
     private int CountAliveNeighbors(bool[,] grid, int row, int col)
     {
         int rows = grid.GetLength(0);
