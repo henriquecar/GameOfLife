@@ -14,12 +14,13 @@ public class BoardRepository : IBoardRepository
         _matrixMapper = matrixMapper;
     }
 
-    public async Task SaveBoardAsync(Board board)
+    public async Task<Board> SaveBoardAsync(Board board)
     {
         var boardEF = new BoardEF(board.Id, board.State);
         boardEF.StateJson = JsonSerializer.Serialize(_matrixMapper.To(board.State));
         _db.Boards.Add(boardEF);
         await _db.SaveChangesAsync();
+        return boardEF;
     }
     public async Task<Board?> GetBoardAsync(Guid id)
     {

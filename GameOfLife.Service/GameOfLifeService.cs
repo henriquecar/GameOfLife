@@ -1,6 +1,7 @@
 using GameOfLife.Common.Mapper;
 using GameOfLife.Model;
 using GameOfLife.Repository;
+using System.Reflection;
 using System.Text.Json;
 
 namespace GameOfLife.Services;
@@ -16,13 +17,14 @@ public class GameOfLifeService
         _matrixMapper = matrixMapper;
     }
 
-    public Task SaveBoardAsync(Board board) => _repository.SaveBoardAsync(board);
-
-    public Task<Board?> GetBoardAsync(Guid id) => _repository.GetBoardAsync(id);
+    public Task<Board> SaveBoardAsync(bool[,] initialState) {
+        var board = new Board(initialState);
+        return _repository.SaveBoardAsync(board);
+    }
 
     public async Task<Board?> NextGeneration(Guid id)
     {
-        var board = await GetBoardAsync(id);
+        var board = await _repository.GetBoardAsync(id);
         if (board == null) return board;
         Next(board);
 
@@ -33,7 +35,7 @@ public class GameOfLifeService
 
     public async Task<Board?> Advance(Guid id, int steps)
     {
-        var board = await GetBoardAsync(id);
+        var board = await _repository.GetBoardAsync(id);
         if (board == null) return board;
 
         for (int i = 0; i < steps; i++)
@@ -45,7 +47,7 @@ public class GameOfLifeService
 
     public async Task<(Board?, bool)> FindFinalState(Guid id, int max)
     {
-        var board = await GetBoardAsync(id);
+        var board = await _repository.GetBoardAsync(id);
         if (board == null) return (board, false);
 
         var history = new HashSet<string>();
@@ -73,7 +75,7 @@ public class GameOfLifeService
         {
             for (int c = 0; c < cols; c++)
             {
-                int alive = CountAlive(grid, r, c);
+                int alive = CountAliveNeighbors(grid, r, c);
                 if (grid[r, c])
                     next[r, c] = alive == 2 || alive == 3;
                 else
@@ -85,22 +87,38 @@ public class GameOfLifeService
         board.Step++;
     }
 
-    private int CountAlive(bool[,] grid, int r, int c)
+
+    private int CountAliveNeighbors(bool[,] grid, int row, int col)
     {
         int rows = grid.GetLength(0);
         int cols = grid.GetLength(1);
-        int count = 0;
+        int aliveCount = 0;
 
-        for (int dr = -1; dr <= 1; dr++)
+        for (int relativeRowOffset = -1; relativeRowOffset <= 1; relativeRowOffset++)
         {
-            for (int dc = -1; dc <= 1; dc++)
+            for (int relativeColOffset = -1; relativeColOffset <= 1; relativeColOffset++)
             {
-                if (dr == 0 && dc == 0) continue;
-                int nr = r + dr, nc = c + dc;
-                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr, nc])
-                    count++;
+                if (IsCurrentCell(relativeRowOffset, relativeColOffset))
+                    continue;
+
+                int neighborRow = row + relativeRowOffset;
+                int neighborCol = col + relativeColOffset;
+
+                if (IsInsideGrid(neighborRow, neighborCol, rows, cols) && grid[neighborRow, neighborCol])
+                    aliveCount++;
             }
         }
-        return count;
+
+        return aliveCount;
+    }
+
+    private static bool IsCurrentCell(int relativeRowOffset, int relativeColOffset)
+    {
+        return relativeRowOffset == 0 && relativeColOffset == 0;
+    }
+
+    private bool IsInsideGrid(int row, int col, int totalRows, int totalCols)
+    {
+        return row >= 0 && row < totalRows && col >= 0 && col < totalCols;
     }
 }

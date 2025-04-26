@@ -1,4 +1,7 @@
+using GameOfLife.Api.Mapper;
+using GameOfLife.Api.Models;
 using GameOfLife.Common.Mapper;
+using GameOfLife.Model;
 using GameOfLife.Repository;
 using GameOfLife.Services;
 
@@ -14,6 +17,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMapper();
 builder.Services.AddRepository();
 builder.Services.AddService();
+builder.Services.AddScoped<IMapper<Board, BoardModel>, BoardMapper>();
 
 var app = builder.Build();
 
