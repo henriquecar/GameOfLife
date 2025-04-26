@@ -1,3 +1,4 @@
+using GameOfLife.Common.Mapper;
 using GameOfLife.Repository;
 using GameOfLife.Services;
 
@@ -8,6 +9,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//custom services
+builder.Services.AddMapper();
 builder.Services.AddRepository();
 builder.Services.AddService();
 

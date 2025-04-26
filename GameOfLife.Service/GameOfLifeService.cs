@@ -1,4 +1,4 @@
-using GameOfLife.Common;
+using GameOfLife.Common.Mapper;
 using GameOfLife.Model;
 using GameOfLife.Repository;
 using System.Text.Json;
@@ -8,14 +8,63 @@ namespace GameOfLife.Services;
 public class GameOfLifeService
 {
     private readonly IBoardRepository _repository;
+    private readonly IMapper<bool[,], List<List<bool>>> _matrixMapper;
 
-    public GameOfLifeService(IBoardRepository repository)
+    public GameOfLifeService(IBoardRepository repository, IMapper<bool[,], List<List<bool>>> matrixMapper)
     {
         _repository = repository;
+        _matrixMapper = matrixMapper;
     }
 
-    public bool[,] NextGeneration(bool[,] grid)
+    public Task SaveBoardAsync(Board board) => _repository.SaveBoardAsync(board);
+
+    public Task<Board?> GetBoardAsync(Guid id) => _repository.GetBoardAsync(id);
+
+    public async Task<Board?> NextGeneration(Guid id)
     {
+        var board = await GetBoardAsync(id);
+        if (board == null) return board;
+        Next(board);
+
+        await _repository.UpdateBoardAsync(board);
+
+        return board;
+    }
+
+    public async Task<Board?> Advance(Guid id, int steps)
+    {
+        var board = await GetBoardAsync(id);
+        if (board == null) return board;
+
+        for (int i = 0; i < steps; i++)
+            Next(board);
+
+        await _repository.UpdateBoardAsync(board);
+        return board;
+    }
+
+    public async Task<(Board?, bool)> FindFinalState(Guid id, int max)
+    {
+        var board = await GetBoardAsync(id);
+        if (board == null) return (board, false);
+
+        var history = new HashSet<string>();
+        for (int i = 0; i < max; i++)
+        {
+            var snapshot = JsonSerializer.Serialize(_matrixMapper.To(board.State));
+            if (!history.Add(snapshot))
+            {
+                await _repository.UpdateBoardAsync(board);
+                return (board, true);
+            }
+            Next(board);
+        }
+        return (board, false);
+    }
+
+    private void Next(Board board)
+    {
+        var grid = board.State;
         int rows = grid.GetLength(0);
         int cols = grid.GetLength(1);
         var next = new bool[rows, cols];
@@ -31,27 +80,9 @@ public class GameOfLifeService
                     next[r, c] = alive == 3;
             }
         }
-        return next;
-    }
 
-    public bool[,] Advance(bool[,] grid, int steps)
-    {
-        for (int i = 0; i < steps; i++)
-            grid = NextGeneration(grid);
-        return grid;
-    }
-
-    public (bool[,], bool) FindFinalState(bool[,] grid, int max)
-    {
-        var history = new HashSet<string>();
-        for (int i = 0; i < max; i++)
-        {
-            var snapshot = JsonSerializer.Serialize(Serializer.ToJagged(grid));
-            if (!history.Add(snapshot))
-                return (grid, true);
-            grid = NextGeneration(grid);
-        }
-        return (grid, false);
+        board.State = next;
+        board.Step++;
     }
 
     private int CountAlive(bool[,] grid, int r, int c)
@@ -72,10 +103,4 @@ public class GameOfLifeService
         }
         return count;
     }
-
-    public Task SaveBoardAsync(Board board) => _repository.SaveBoardAsync(board);
-
-    public Task<Board?> GetBoardAsync(Guid id) => _repository.GetBoardAsync(id);
-
-    public Task UpdateBoardAsync(Board board) => _repository.UpdateBoardAsync(board);
 }
