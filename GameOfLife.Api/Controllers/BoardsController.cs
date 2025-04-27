@@ -26,7 +26,18 @@ public class BoardsController : ControllerBase
     [ProducesResponseType<BoardModel>((int)HttpStatusCode.OK)]
     public async Task<IActionResult> Post([FromBody] CreateBoardRequest model)
     {
-        var board = await _service.SaveBoardAsync(_matrixMapper.From(model.InitialState));
+        var initialState = _matrixMapper.From(model.InitialState);
+
+        int rows = initialState.GetLength(0);
+        int cols = initialState.GetLength(1);
+
+        if (rows < 3 || cols < 3)
+            return BadRequest("Board must be at least 3x3 in size.");
+
+        if (rows > 100 || cols > 100)
+            return BadRequest("Board must be at most 100x100 in size.");
+
+        var board = await _service.SaveBoardAsync(initialState);
         return Ok(_boardMapper.To(board));
     }
 

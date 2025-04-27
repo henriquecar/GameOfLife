@@ -17,7 +17,8 @@ public class GameOfLifeService
         _matrixMapper = matrixMapper;
     }
 
-    public Task<Board> SaveBoardAsync(bool[,] initialState) {
+    public Task<Board> SaveBoardAsync(bool[,] initialState)
+    {
         var board = new Board(initialState);
         return _repository.SaveBoardAsync(board);
     }
