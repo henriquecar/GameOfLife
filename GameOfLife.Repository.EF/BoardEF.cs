@@ -16,11 +16,14 @@ namespace GameOfLife.Repository.EF
         {
             Id = id;
             State = currentState;
+            RowsCount = currentState.GetLength(0);
+            ColsCount = currentState.GetLength(1);
         }
 
         [NotMapped]
         public override bool[,] State { get; set; } = new bool[0, 0];
-
         public string StateJson { get; set; } = string.Empty;
+        public int RowsCount { get; set; } = 0;
+        public int ColsCount { get; set; } = 0;
     }
 }
