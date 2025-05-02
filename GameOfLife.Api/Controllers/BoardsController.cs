@@ -7,21 +7,41 @@ using System.Net;
 
 namespace GameOfLife.Api.Controllers;
 
+/// <summary>
+/// Controller responsible for managing Game of Life boards.
+/// Exposes endpoints to create boards and simulate their evolution.
+/// </summary>
 [ApiController]
 [Route("[controller]")]
 public class BoardsController : ControllerBase
 {
-    private readonly GameOfLifeService _service;
+    private readonly IGameOfLifeService _service;
     private readonly IMapper<bool[,], List<List<bool>>> _matrixMapper;
     private readonly IMapper<Board, BoardModel> _boardMapper;
 
-    public BoardsController(GameOfLifeService service, IMapper<bool[,], List<List<bool>>> matrixMapper, IMapper<Board, BoardModel> boardMapper)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BoardsController"/>.
+    /// </summary>
+    /// <param name="service">Service containing the game logic.</param>
+    /// <param name="matrixMapper">Mapper for converting between matrix representations.</param>
+    /// <param name="boardMapper">Mapper for converting domain Board to API model.</param>
+    public BoardsController(
+        IGameOfLifeService service,
+        IMapper<bool[,], List<List<bool>>> matrixMapper,
+        IMapper<Board, BoardModel> boardMapper)
     {
         _service = service;
         _matrixMapper = matrixMapper;
         _boardMapper = boardMapper;
     }
 
+    /// <summary>
+    /// Creates a new board with an initial state.
+    /// </summary>
+    /// <param name="model">The request containing the initial matrix state.</param>
+    /// <returns>The created board with its identifier and current state.</returns>
+    /// <response code="200">Returns the created board</response>
+    /// <response code="400">If the board size is invalid</response>
     [HttpPost]
     [ProducesResponseType<BoardModel>((int)HttpStatusCode.OK)]
     public async Task<IActionResult> Post([FromBody] CreateBoardRequest model)
@@ -41,6 +61,13 @@ public class BoardsController : ControllerBase
         return Ok(_boardMapper.To(board));
     }
 
+    /// <summary>
+    /// Calculates the next generation of the board.
+    /// </summary>
+    /// <param name="id">The ID of the board.</param>
+    /// <returns>The updated board after one generation.</returns>
+    /// <response code="200">Returns the board in its next state</response>
+    /// <response code="404">If the board was not found</response>
     [HttpGet("{id}/next")]
     [ProducesResponseType<BoardModel>((int)HttpStatusCode.OK)]
     public async Task<IActionResult> Next(Guid id)
@@ -50,6 +77,14 @@ public class BoardsController : ControllerBase
         return Ok(_boardMapper.To(board));
     }
 
+    /// <summary>
+    /// Advances the board by a given number of generations.
+    /// </summary>
+    /// <param name="id">The ID of the board.</param>
+    /// <param name="steps">Number of generations to advance.</param>
+    /// <returns>The board after the specified number of steps.</returns>
+    /// <response code="200">Returns the updated board</response>
+    /// <response code="404">If the board was not found</response>
     [HttpGet("{id}/advance/{steps:int}")]
     [ProducesResponseType<BoardModel>((int)HttpStatusCode.OK)]
     public async Task<IActionResult> Steps(Guid id, int steps)
@@ -59,6 +94,15 @@ public class BoardsController : ControllerBase
         return Ok(_boardMapper.To(board));
     }
 
+    /// <summary>
+    /// Finds the final stable state of the board.
+    /// </summary>
+    /// <param name="id">The ID of the board.</param>
+    /// <param name="max">Maximum number of attempts to reach stability (default: 1000).</param>
+    /// <returns>The final board state and stability status.</returns>
+    /// <response code="200">Returns the final stable board</response>
+    /// <response code="400">If the board did not stabilize within the limit</response>
+    /// <response code="404">If the board was not found</response>
     [HttpGet("{id}/final")]
     [ProducesResponseType<FinalStateResult>((int)HttpStatusCode.OK)]
     public async Task<IActionResult> Final(Guid id, int? max)

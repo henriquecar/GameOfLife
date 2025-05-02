@@ -3,28 +3,36 @@ using GameOfLife.Api.Mapper;
 using GameOfLife.Api.Models;
 using GameOfLife.Common.Mapper;
 using GameOfLife.Model;
-using GameOfLife.Repository;
-using GameOfLife.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace GameOfLife.Api;
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+public class Program
+{
+    static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-//custom services
-builder.Services.AddMapper();
-builder.Services.AddRepository();
-builder.Services.AddService();
-builder.Services.AddScoped<IMapper<Board, BoardModel>, BoardMapper>();
+        builder.Services.AddControllers();
+        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+        builder.Services.AddOpenApi();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+        //custom services
+        builder.Services.AddDomain();
+        builder.Services.AddMapper();
+        builder.Services.AddRepository();
+        builder.Services.AddService();
+        builder.Services.AddScoped<IMapper<Board, BoardModel>, BoardMapper>();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseHttpsRedirection();
-app.MapControllers();
+        var app = builder.Build();
 
-app.Run();
+        app.UseSwagger();
+        app.UseSwaggerUI();
+        app.UseHttpsRedirection();
+        app.MapControllers();
+
+        app.Run();
+    }
+
+}

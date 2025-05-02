@@ -3,15 +3,25 @@ using GameOfLife.Model;
 using System.Text.Json;
 
 namespace GameOfLife.Repository.EF;
+
+/// <summary>
+/// EF Core implementation of <see cref="IBoardRepository"/> for persisting Game of Life boards.
+/// Stores only the alive cells in JSON format to optimize persistence.
+/// </summary>
 public class BoardRepository : IBoardRepository
 {
     private readonly GameDbContext _db;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BoardRepository"/> class with the given database context.
+    /// </summary>
+    /// <param name="db">The EF Core database context.</param>
     public BoardRepository(GameDbContext db)
     {
         _db = db;
     }
 
+    /// <inheritdoc />
     public async Task<Board> SaveBoardAsync(Board board)
     {
         var boardEF = new BoardEF(board.Id, board.State);
@@ -21,16 +31,19 @@ public class BoardRepository : IBoardRepository
         await _db.SaveChangesAsync();
         return boardEF;
     }
+
+    /// <inheritdoc />
     public async Task<Board?> GetBoardAsync(Guid id)
     {
         var boardEF = await _db.Boards.FindAsync(id);
         if (boardEF == null) return boardEF;
 
-
         var aliveCells = JsonSerializer.Deserialize<List<int[]>>(boardEF.StateJson);
         boardEF.State = BuildGridFromAliveCells(aliveCells!, boardEF.RowsCount, boardEF.ColsCount);
         return boardEF;
     }
+
+    /// <inheritdoc />
     public async Task UpdateBoardAsync(Board board)
     {
         var boardEF = await _db.Boards.FindAsync(board.Id);
@@ -38,13 +51,19 @@ public class BoardRepository : IBoardRepository
 
         boardEF.Step = board.Step;
         boardEF.State = board.State;
-        
+
         var aliveCells = GetAliveCells(boardEF);
         boardEF.StateJson = JsonSerializer.Serialize(aliveCells);
 
         _db.Boards.Update(boardEF);
         await _db.SaveChangesAsync();
     }
+
+    /// <summary>
+    /// Extracts the coordinates of all alive cells from the given board.
+    /// </summary>
+    /// <param name="board">The board entity containing the current state matrix.</param>
+    /// <returns>A list of integer arrays where each entry represents a live cell's (row, col).</returns>
     private List<int[]> GetAliveCells(BoardEF board)
     {
         var aliveCells = new List<int[]>();
@@ -62,6 +81,14 @@ public class BoardRepository : IBoardRepository
 
         return aliveCells;
     }
+
+    /// <summary>
+    /// Reconstructs the full board matrix from a list of alive cell coordinates.
+    /// </summary>
+    /// <param name="aliveCells">A list of (row, col) pairs representing live cells.</param>
+    /// <param name="rows">Total number of rows in the matrix.</param>
+    /// <param name="cols">Total number of columns in the matrix.</param>
+    /// <returns>A full boolean matrix with live cells marked as <c>true</c>.</returns>
     private bool[,] BuildGridFromAliveCells(List<int[]> aliveCells, int rows, int cols)
     {
         var grid = new bool[rows, cols];
