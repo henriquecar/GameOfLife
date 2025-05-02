@@ -29,31 +29,18 @@ https://localhost:<port>/swagger
 
 ### ✅ Layers and dependencies
 
-| Layer           | Depends On →                     | Purpose                                                                                                                                                                                                                         |
-| --------------- | -------------------------------- | ---------------------------------------------                                                                                                                                                                                   |
-| `Model`         | (none)                           | Defines the core domain objects and value structures of the application. It contains pure business representations, free from persistence or transport concerns. This layer is the most stable and reusable part of the system. |
-| `Common`        | (used by all)                    | Holds reusable types, validations, interfaces                                                                                                                                                                                   |
-| `Services`      | `Repository`                     | Contains business logic and game rules, uses Repository as a door to persist the objects                                                                                                                                        |
-| `Api`           | `Services`                       | Exposes endpoints, handles requests/responses                                                                                                                                                                                   |
-| `Repository.EF` | `Repository`, `Common`           | Implements data access using EF Core                                                                                                                                                                                            |
-| `Repository`    | (none, abstract)                 | Declares contracts for data access                                                                                                                                                                                              |
-| `Common.Mapper` | `Common`                         | Converts between domain/DTO models                                                                                                                                                                                              |
-| `Tests`         | `Api`, `Services`, `Common`      | Validates functionality                                                                                                                                                                                                         |
+| Layer                             | Depends On →                                      | Purpose                                                                                                                                                                                                                         |
+| ---------------                   | --------------------------------                  | ---------------------------------------------                                                                                                                                                                                   |
+| `Model`                           | (none)                                            | Defines the core domain objects and value structures of the application. It contains pure business representations, free from persistence or transport concerns. This layer is the most stable and reusable part of the system. |
+| `Common`                          | (used by all)                                     | Holds reusable types, validations, interfaces                                                                                                                                                                                   |
+| `Application`                     | `Persistence`                                     | Contains business logic and game rules, uses Persistence as a door to persist the objects                                                                                                                                       |
+| `Presentation.Api`                | `Application`                                     | Exposes endpoints, handles requests/responses                                                                                                                                                                                   |
+| `Persistence.EF`                  | `Persistence`, `Common`                           | Implements data access using EF Core                                                                                                                                                                                            |
+| `Persistence`                     | (none, abstract)                                  | Declares contracts for data access                                                                                                                                                                                              |
+| `Common.Mapper`                   | `Common`                                          | Converts between domain/DTO models                                                                                                                                                                                              |
+| `Tests`                           | `Presentation.Api`, `Application`, `Common`       | Validates functionality                                                                                                                                                                                                         |
 
----
-
-### 🔁 Updated Dependency Flow (Top-Down)
-
-```text
-+---------+           
-|   API   | → Services → Mapper → Common
-+---------+             ↓
-                      Repository
-                         ↓
-                    Repository.EF
-
-(Tests references multiple layers to validate behavior)
-```
+![Onion Architecture](onion-architecture.png)
 
 ---
 
