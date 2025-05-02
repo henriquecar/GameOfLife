@@ -1,8 +1,8 @@
 ﻿using GameOfLife.Common.Mapper;
 using GameOfLife.Domain;
-using GameOfLife.Model;
-using GameOfLife.Repository;
-using GameOfLife.Services;
+using GameOfLife.Domain;
+using GameOfLife.Persistence;
+using GameOfLife.Applications;
 using Moq;
 using Xunit;
 
@@ -11,13 +11,13 @@ namespace GameOfLife.UnitTests;
 public class GameOfLifeServiceTests
 {
     private readonly BoolMatrixMapper _boolMatrixMapper = new();
-    private readonly Mock<IBoardRepository> _repositoryMock = new();
+    private readonly Mock<IBoardPersistence> _repositoryMock = new();
     private readonly BoardSimulator _boardSimulator = new();
-    private readonly GameOfLifeService _service;
+    private readonly Applications.BoardApplication _service;
 
     public GameOfLifeServiceTests()
     {
-        _service = new GameOfLifeService(_repositoryMock.Object, _boolMatrixMapper, _boardSimulator);
+        _service = new Applications.BoardApplication(_repositoryMock.Object, _boolMatrixMapper, _boardSimulator);
     }
 
     [Fact]

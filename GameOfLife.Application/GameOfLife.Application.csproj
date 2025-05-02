@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GameOfLife.Common\GameOfLife.Common.csproj" />
     <ProjectReference Include="..\GameOfLife.Domain\GameOfLife.Domain.csproj" />
+    <ProjectReference Include="..\GameOfLife.Persistence\GameOfLife.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

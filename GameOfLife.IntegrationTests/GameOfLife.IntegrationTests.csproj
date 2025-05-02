@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GameOfLife.Api\GameOfLife.Api.csproj" />
+    <ProjectReference Include="..\GameOfLife.Presentation.Api\GameOfLife.Presentation.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

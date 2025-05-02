@@ -1,5 +1,5 @@
-using GameOfLife.Model;
-using GameOfLife.Repository.EF;
+using GameOfLife.Domain;
+using GameOfLife.Persistence.EF;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -9,7 +9,7 @@ namespace GameOfLife.IntegrationTests;
 public class BoardRepositoryTests : IDisposable
 {
     private readonly GameDbContext _context;
-    private readonly BoardRepository _repository;
+    private readonly BoardPersistence _repository;
     private readonly SqliteConnection _connection;
 
     public BoardRepositoryTests()
@@ -24,7 +24,7 @@ public class BoardRepositoryTests : IDisposable
         _context = new GameDbContext(options);
         _context.Database.EnsureCreated();
 
-        _repository = new BoardRepository(_context);
+        _repository = new BoardPersistence(_context);
     }
 
     [Fact]

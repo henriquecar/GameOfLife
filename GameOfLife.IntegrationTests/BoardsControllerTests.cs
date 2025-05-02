@@ -1,9 +1,9 @@
 using System;
 using System.Net;
 using System.Net.Http.Json;
-using GameOfLife.Api;
-using GameOfLife.Api.Models;
-using GameOfLife.Repository.EF;
+using GameOfLife.Presentation.Api;
+using GameOfLife.Presentation.Api.Models;
+using GameOfLife.Persistence.EF;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
