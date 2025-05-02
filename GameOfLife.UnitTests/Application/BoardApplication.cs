@@ -6,16 +6,16 @@ using GameOfLife.Applications;
 using Moq;
 using Xunit;
 
-namespace GameOfLife.UnitTests;
+namespace GameOfLife.UnitTests.Application;
 
-public class GameOfLifeServiceTests
+public class BoardApplication
 {
     private readonly BoolMatrixMapper _boolMatrixMapper = new();
     private readonly Mock<IBoardPersistence> _repositoryMock = new();
     private readonly BoardSimulator _boardSimulator = new();
     private readonly Applications.BoardApplication _service;
 
-    public GameOfLifeServiceTests()
+    public BoardApplication()
     {
         _service = new Applications.BoardApplication(_repositoryMock.Object, _boolMatrixMapper, _boardSimulator);
     }

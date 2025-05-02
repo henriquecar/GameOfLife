@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace GameOfLife.IntegrationTests;
+namespace GameOfLife.UnitTests.Persistence;
 
 public class BoardRepositoryTests : IDisposable
 {
