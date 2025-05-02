@@ -1,3 +1,4 @@
+using GameOfLife.Api.Extensions;
 using GameOfLife.Api.Mapper;
 using GameOfLife.Api.Models;
 using GameOfLife.Common.Mapper;
